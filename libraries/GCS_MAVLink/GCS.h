@@ -199,6 +199,10 @@ public:
     mavlink_message_t *channel_buffer() { return &_channel_buffer; }
     mavlink_status_t *channel_status() { return &_channel_status; }
 
+    bool reaper_my_command_complete = false;
+    void do_reaper_my_command(const mavlink_command_long_t &packet);
+    bool verify_reaper_my_command();
+
     void        update_receive(uint32_t max_time_us=1000);
     void        update_send();
     bool        init(uint8_t instance);

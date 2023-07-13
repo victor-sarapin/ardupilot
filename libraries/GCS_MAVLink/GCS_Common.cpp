@@ -4841,6 +4841,12 @@ MAV_RESULT GCS_MAVLINK::handle_command_long_packet(const mavlink_command_long_t 
             result = handle_command_airframe_configuration(packet);
             break;
 #endif
+    ///
+    /// my custom command
+    /// 
+    case MAVLINK_MSG_ID_RPR_MY_CMD:
+        do_reaper_my_command(packet);
+        break;
 
     default:
         result = MAV_RESULT_UNSUPPORTED;
@@ -4849,6 +4855,39 @@ MAV_RESULT GCS_MAVLINK::handle_command_long_packet(const mavlink_command_long_t 
 
     return result;
 }
+
+//*****************
+// Reaper commands
+//*****************
+
+void GCS_MAVLINK::do_reaper_my_command(const mavlink_command_long_t &packet)
+{
+    reaper_my_command_complete = false;
+
+    //mavlink_rpr_my_cmd_t my_command;
+    
+    printf("Reaper My new command");
+    /*
+    AP::logger().Write("Reaper", 
+        "Msg,Param1,Param2,Param3", 
+        "NBBf", 
+        "My new command",
+        packet.param1,
+        packet.param2,
+        packet.param3);
+    */
+    gcs().send_text(MAV_SEVERITY_INFO, "Reaper My Command arrived (%u)", (unsigned int)packet.command);
+
+    reaper_my_command_complete = true;
+}
+
+bool GCS_MAVLINK::verify_reaper_my_command()
+{
+    return reaper_my_command_complete;
+}
+
+
+
 
 bool GCS_MAVLINK::location_from_command_t(const mavlink_command_long_t &in, MAV_FRAME in_frame, Location &out)
 {
